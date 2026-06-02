@@ -1,29 +1,37 @@
 # omp-figma
 
-Figma design integration for Oh My Pi. Registers 21 native `figma_*` tools that the LLM can call to read Figma design files — summaries, implementation context, screenshots, components, styles, variables, design tokens, and more.
-
-## Install
-
-**Option A — project-local:** copy or symlink into your project's `.omp/extensions/` directory.
-
-**Option B — user-level:** drop into `~/.omp/agent/extensions/` to load globally.
+Figma design integration for omp. Registers 21 native `figma_*` tools that the LLM can call to read Figma design files — summaries, implementation context, screenshots, components, styles, variables, design tokens, and more.
 
 ```bash
-cp -r .omp/extensions/figma ~/.omp/agent/extensions/figma
+omp install github:neuralmux/omp-figma
 ```
 
-**Option C — config:** point the `extensions` setting at the directory.
+To pin a release:
+
+```bash
+omp install github:neuralmux/omp-figma#v1.0.0
+```
+
+For a project-scoped install (shared with your team via `.omp/plugins/installed_plugins.json`):
+
+```bash
+omp install -l github:neuralmux/omp-figma
+```
+
+### Manual install
+
+**User-level:** drop into `~/.omp/agent/extensions/` to load globally.
+
+```bash
+git clone git@github.com:neuralmux/omp-figma.git ~/.omp/agent/extensions/figma
+```
+
+**Config:** point the `extensions` setting at the clone path.
 
 ```yaml
 # ~/.omp/agent/config.yml
 extensions:
-  - /path/to/omp-figma
-```
-
-**Option D — CLI flag:**
-
-```bash
-omp --extension /path/to/omp-figma
+  - ~/.omp/agent/extensions/figma
 ```
 
 ## Auth
@@ -46,6 +54,12 @@ Or create `~/.omp/agent/auth.json`:
 
 Generate a token at https://www.figma.com/settings/tokens (File content scope, read-only).
 
+## What this plugin bundles
+
+| Surface | Path | Description |
+| --- | --- | --- |
+| Extension | `index.ts` | Registers 21 Figma tools via `ExtensionAPI` |
+| Skill | `skills/figma/SKILL.md` | LLM workflow instructions for using the tools |
 ## Tools
 
 All tools are prefixed `figma_*`. The LLM discovers them automatically from the skill file (`skills/figma/SKILL.md`).
