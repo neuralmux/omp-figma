@@ -60,6 +60,7 @@ Generate a token at https://www.figma.com/settings/tokens (File content scope, r
 | --- | --- | --- |
 | Extension | `index.ts` | Registers 21 Figma tools via `ExtensionAPI` |
 | Skill | `skills/figma/SKILL.md` | LLM workflow instructions for using the tools |
+
 ## Tools
 
 All tools are prefixed `figma_*`. The LLM discovers them automatically from the skill file (`skills/figma/SKILL.md`).
