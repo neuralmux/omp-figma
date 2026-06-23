@@ -17,7 +17,11 @@ function jsonToolResult(
   if (text.length <= max) {
     return {
       content: [{ type: "text" as const, text }],
-      details: value as Record<string, unknown>,
+      details: Array.isArray(value)
+        ? { items: value }
+        : typeof value === "object" && value !== null
+          ? (value as Record<string, unknown>)
+          : { value: String(value) },
     };
   }
   const truncated = text.slice(0, max);
@@ -28,11 +32,23 @@ function jsonToolResult(
         text: `${truncated}\n\n[truncated ${text.length - max} characters; inspect a narrower node or reduce scope]`,
       },
     ],
-    details: {
-      truncated: true,
-      totalCharacters: text.length,
-      ...(value as Record<string, unknown>),
-    },
+    details: Array.isArray(value)
+      ? {
+          truncated: true,
+          totalCharacters: text.length,
+          items: value,
+        }
+      : typeof value === "object" && value !== null
+        ? {
+            truncated: true,
+            totalCharacters: text.length,
+            ...(value as Record<string, unknown>),
+          }
+        : {
+            truncated: true,
+            totalCharacters: text.length,
+            value: String(value),
+          },
   };
 }
 
