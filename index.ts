@@ -1,6 +1,7 @@
 import type { ExtensionAPI } from "@oh-my-pi/pi-coding-agent";
 import { buildFigmaParams } from "./lib/schemas.js";
 import { FigmaClient, parseFigmaUrl } from "./lib/client.js";
+import { sanitizeDetails } from "./lib/detail-sanitizer.js";
 import { mkdtemp } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -8,22 +9,28 @@ import { join } from "node:path";
 const DEFAULT_PROCESSED_MAX_CHARS = 20_000;
 const DEFAULT_RAW_MAX_CHARS = 40_000;
 
+function buildDetails(value: unknown): Record<string, unknown> {
+  if (Array.isArray(value)) return { items: value };
+  if (typeof value === "object" && value !== null)
+    return sanitizeDetails(value as Record<string, unknown>);
+  return { value: String(value) };
+}
+
 function jsonToolResult(
   value: unknown,
   opts?: { maxChars?: number },
 ) {
   const text = JSON.stringify(value, null, 2);
   const max = opts?.maxChars ?? DEFAULT_PROCESSED_MAX_CHARS;
+  const details = buildDetails(value);
+
   if (text.length <= max) {
     return {
       content: [{ type: "text" as const, text }],
-      details: Array.isArray(value)
-        ? { items: value }
-        : typeof value === "object" && value !== null
-          ? (value as Record<string, unknown>)
-          : { value: String(value) },
+      details,
     };
   }
+
   const truncated = text.slice(0, max);
   return {
     content: [
@@ -32,23 +39,11 @@ function jsonToolResult(
         text: `${truncated}\n\n[truncated ${text.length - max} characters; inspect a narrower node or reduce scope]`,
       },
     ],
-    details: Array.isArray(value)
-      ? {
-          truncated: true,
-          totalCharacters: text.length,
-          items: value,
-        }
-      : typeof value === "object" && value !== null
-        ? {
-            truncated: true,
-            totalCharacters: text.length,
-            ...(value as Record<string, unknown>),
-          }
-        : {
-            truncated: true,
-            totalCharacters: text.length,
-            value: String(value),
-          },
+    details: {
+      truncated: true,
+      totalCharacters: text.length,
+      ...details,
+    },
   };
 }
 
