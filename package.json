@@ -1,6 +1,6 @@
 {
   "name": "omp-figma",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Figma design integration for Oh My Pi — native tools for reading design files, extracting assets, and translating designs into code",
   "license": "MIT",
   "keywords": ["omp", "oh-my-pi", "extension", "figma", "design", "design-to-code"],
