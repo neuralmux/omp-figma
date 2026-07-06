@@ -1,7 +1,6 @@
 import type { z } from "zod/v4";
 
-export function buildSchemas(zod: typeof z) {
-  const z = zod;
+export function buildSchemas(z: typeof z) {
   const FileKeySchema = z
     .string()
     .describe("Figma file key from a Figma URL");
@@ -108,9 +107,8 @@ export function buildSchemas(zod: typeof z) {
   };
 }
 
-export function buildFigmaParams(zod: typeof z) {
-  const z = zod;
-  const s = buildSchemas(zod);
+export function buildFigmaParams(z: typeof z) {
+  const s = buildSchemas(z);
 
   return {
     FigmaParseUrlParams: z.object({

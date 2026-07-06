@@ -101,7 +101,7 @@ async function storeToken(token: string): Promise<void> {
 }
 
 export default function figmaExtension(pi: ExtensionAPI): void {
-  const z = pi.zod;
+  const { z } = pi.zod;
   const params = buildFigmaParams(z);
   const client = new FigmaClient();
 
@@ -118,8 +118,6 @@ export default function figmaExtension(pi: ExtensionAPI): void {
       "Securely prompt for and store a Figma personal access token. Run this when Figma auth is missing, invalid, expired, or the user asks to update the token. The token is stored locally and never returned to the model.",
     parameters: z.object({}),
     async execute(_toolCallId, _params) {
-      // In omp, we use the auth file pattern. The token can be set via
-      // FIGMA_TOKEN env var or auth.json. This tool guides the user.
       const existing = await readToken();
       if (existing) {
         client.setToken(existing);
