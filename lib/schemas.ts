@@ -45,9 +45,9 @@ export function buildSchemas(z: typeof z) {
   };
 
   const RenderFormat = z
-    .enum(["png", "jpg", "svg", "pdf"])
+    .string()
     .optional()
-    .describe("Rendered asset format (default png)");
+    .describe("Rendered asset format — one of: png, jpg, svg, pdf (default png)");
   const Scale = z
     .number()
     .min(0.01)
@@ -79,19 +79,13 @@ export function buildSchemas(z: typeof z) {
   };
 
   const Framework = z
-    .enum(["react", "html", "vue", "angular", "react-native"])
+    .string()
     .optional()
-    .describe("Target framework for code snippets and hints");
+    .describe("Target framework — one of: react, html, vue, angular, react-native");
   const Styling = z
-    .enum([
-      "css",
-      "css-modules",
-      "styled-components",
-      "tailwind",
-      "inline",
-    ])
+    .string()
     .optional()
-    .describe("Target styling approach for code hints");
+    .describe("Target styling approach — one of: css, css-modules, styled-components, tailwind, inline");
 
   return {
     FileKeySchema,
@@ -226,7 +220,9 @@ export function buildFigmaParams(z: typeof z) {
       fileKey: s.FileKeySchema,
       nodeId: s.NodeIdSchema,
       assetTypes: z
-        .array(z.enum(["svgIcons", "nodeRenders", "imageFills"]))
+        .array(
+          z.string().describe("Asset type — one of: svgIcons, nodeRenders, imageFills"),
+        )
         .optional()
         .describe(
           "Asset types to extract (default: all three)",
